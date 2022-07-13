@@ -1,0 +1,104 @@
+﻿@page "/processStrings"
+@inject ChallengeService.IProcessStrings ProcessStringService
+@inject Resource Resource
+
+<PageTitle>Process Strings</PageTitle>
+
+<h1>Process Strings</h1>
+
+<div class="container">
+    <button class="btn btn-sm btn-link" @onclick="ToggleDropdown" type="button" data-toggle="collapse" data-target="#reqs" aria-expanded="false" aria-controls="reqs">
+    Requirements
+  </button>
+
+    <div id="reqs" class="collapse @DropdownCssClass">
+            <pre>               
+            * for each string, looks at the other strings to search for anagrams (ignoring case)
+                 *      - returns a list of lists, where
+                 *          - each list contains the anagrams of the first string (not case sensitive)
+                 *          - list of lists is sorted alphabetically by the first item in each list
+                 *          - each list is also sorted alphabetically
+                 *          - the string occurs only once in any of the output lists
+                 *          - the list of lists contains all the strings in the input, but only once
+                 *          - does not contain duplicates or whitespace values
+                 *      - if the word does not have an anagram, it is still added as the only element  
+            </pre>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row m-sm-3">
+        <h4 class="row">Simple List</h4>
+        <p class="row">@String.Join(", ", Resource.SimpleList.ToList())</p>
+        <div class="col mt-1">
+            <button class="btn btn-primary col" @onclick="GetSimpleResults">Get Results</button>
+        </div>
+    </div>
+    
+
+    <div class="row m-sm-3">
+        <h4 class="row">Harder List</h4>
+        <p class="row">@String.Join(", ", Resource.HarderList.ToList())</p>
+        <div class="col mt-1">
+            <button class="btn btn-primary" @onclick="GetHardResults">Get Results</button>
+        </div>
+    </div>
+
+    <div class="row m-sm-3">
+        <h4 class="row">Custom List</h4>
+        <div class="row">
+            <input @bind="InputValue" placeholder="comma seperated list"/>
+        </div>
+        <div class="col mt-1">
+            <button class="btn btn-primary" @onclick="GetCustomResults">Get Results</button>
+        </div>
+    </div>
+
+    <div class="row m-sm-3 card card-body">
+        <label>Results: </label>
+        <ul>
+            @foreach (var item in _results)
+            {
+                <li>
+                    @String.Join(", ", item)
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+
+@code {
+    private string? InputValue { get; set; }
+
+    //Workaround for bootstrap animations not working
+    private bool isDropdownVisible = true;
+    private string DropdownCssClass => isDropdownVisible ? "collapsing" : "show";
+    private void ToggleDropdown()
+    {
+        isDropdownVisible = !isDropdownVisible;
+    }
+
+    private IEnumerable<IEnumerable<string>> _results { get; set; } = new List<List<string>>();    
+
+    private void GetSimpleResults()
+    {
+        GetResults(Resource.SimpleList.ToList());
+    }
+
+    private void GetHardResults()
+    {
+        GetResults(Resource.HarderList.ToList());
+    }
+
+    private void GetCustomResults()
+    {
+        if (string.IsNullOrWhiteSpace(InputValue))
+            return;
+        GetResults(InputValue.Split(',').ToList());
+    }
+
+    private void GetResults(List<string> input)
+    {
+        _results = ProcessStringService.Output(input);
+    }
+}

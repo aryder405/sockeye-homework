@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using ChallengeService;
 
 namespace _2.Puzzle.Medium
 {
@@ -54,30 +56,22 @@ namespace _2.Puzzle.Medium
              *  You can do this challenge without using any 3rd party libraries - remember - we want to see YOUR work
              */
 
+            var processor = new ProcessStrings();
 
-            foreach (var list in Output(Resource.SimpleList))
+            foreach (var list in processor.Output(Resource.SimpleList))
             {
-                Console.WriteLine(string.Join(",", list));
+                Console.WriteLine(string.Join(", ", list));
             }
 
             Console.WriteLine("\r\n\r\nSimpleList complete.\r\n");
 
-            foreach (var list in Output(Resource.HarderList))
+            foreach (var list in processor.Output(Resource.HarderList))
             {
-                Console.WriteLine(string.Join(",", list));
+                Console.WriteLine(string.Join(", ", list));
             }
 
             Console.WriteLine("\r\n\r\nHarderList complete.\r\n\r\n");
 
-        }
-
-        static IEnumerable<IEnumerable<string>> Output(IEnumerable<string> input)
-        {
-            var output = new List<List<string>>();
-
-            // YOUR CODE GOES HERE
-
-            return output;
-        }
+        }        
     }
 }
